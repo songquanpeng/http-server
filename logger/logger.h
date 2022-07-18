@@ -18,18 +18,20 @@ public:
         return &instance;
     }
 
-    bool init(int buf_size = 8192, int max_queue_size = 0);
+    void write(const char *file, int line, int level, const char *format, ...);
 
-    void write(const char* file, int line, int level, const char *format, ...);
-
-    static void* flush_log(void *args) {
+    static void *flush_log(void *args) {
         Logger::get_instance()->async_write();
     }
 
     void flush(void);
 
 private:
-    Logger() = default;
+    Logger() {
+        init();
+    };
+
+    bool init(int buf_size = 8192, int max_queue_size = 0);
 
     virtual ~Logger() = default;
 

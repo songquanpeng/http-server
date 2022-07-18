@@ -1,7 +1,6 @@
 #include "logger/logger.h"
 
 int main() {
-    Logger::get_instance()->init();
     LOG_DEBUG("%s", "LOG_DEBUG");
     LOG_INFO("%s", "LOG_INFO");
     LOG_WARN("%s", "LOG_WARN");
