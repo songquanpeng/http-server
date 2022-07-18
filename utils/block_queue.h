@@ -9,8 +9,8 @@
 #include <cstdlib>
 #include <pthread.h>
 #include <sys/time.h>
-#include "../utils/mutex.h"
-#include "../utils/cond.h"
+#include "mutex.h"
+#include "cond.h"
 
 template<class T>
 class BlockQueue {

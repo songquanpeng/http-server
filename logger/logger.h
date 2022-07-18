@@ -9,7 +9,7 @@
 #include <string>
 #include <cstring>
 #include <cstdio>
-#include "../utils/block_queue.h"
+#include "block_queue.h"
 
 class Logger {
 public:
