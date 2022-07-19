@@ -2,15 +2,15 @@
 // Created by song on 7/18/2022.
 //
 
-#ifndef SERVER_BLOCK_QUEUE_H
-#define SERVER_BLOCK_QUEUE_H
+#ifndef SERVER_BLOCKQUEUE_H
+#define SERVER_BLOCKQUEUE_H
 
 #include <iostream>
 #include <cstdlib>
 #include <pthread.h>
 #include <sys/time.h>
-#include "mutex.h"
-#include "cond.h"
+#include "Mutex.h"
+#include "Cond.h"
 
 template<class T>
 class BlockQueue {
@@ -169,4 +169,4 @@ private:
 };
 
 
-#endif //SERVER_BLOCK_QUEUE_H
+#endif //SERVER_BLOCKQUEUE_H

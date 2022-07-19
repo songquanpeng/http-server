@@ -1,10 +1,32 @@
-#include "logger/logger.h"
+#include "TcpServer.h"
+#include "EventLoop.h"
+
+using namespace std;
+
+void onConnectionEstablished(const TcpConnectionPtr &conn) {
+    LOG_INFO("onConnectionEstablished");
+}
+
+void onConnectionClosed(const TcpConnectionPtr &conn) {
+    LOG_INFO("onConnectionClosed");
+}
+
+void onMessage(const TcpConnectionPtr &conn, Buffer *buffer) {
+    LOG_INFO("onMessage");
+}
+
+void onWriteComplete(const TcpConnectionPtr &conn) {
+    LOG_INFO("onWriteComplete");
+}
 
 int main() {
-    LOG_DEBUG("%s", "LOG_DEBUG");
-    LOG_INFO("%s", "LOG_INFO");
-    LOG_WARN("%s", "LOG_WARN");
-    LOG_ERR("%s", "LOG_ERR");
-    LOG_DEBUG("%s", "中文 okay 吗？");
+    TcpServer server;
+    EventLoop loop;
+    server.setConnectionEstablishedCallback(onConnectionEstablished);
+    server.setMessageCallback(onMessage);
+    server.setWriteCompleteCallback(onWriteComplete);
+    server.setConnectionClosedCallback(onConnectionClosed);
+    server.start(4);
+    loop.loop();
     return 0;
 }
