@@ -40,7 +40,10 @@ void Logger::write(const char *file, int line, int level, const char *format, ..
             strcpy(s, "[WARN]:");
             break;
         case 3:
-            strcpy(s, "[ERR]:");
+            strcpy(s, "[ERROR]:");
+            break;
+        case 4:
+            strcpy(s, "[FATAL]:");
             break;
         default:
             strcpy(s, "[INFO]:");

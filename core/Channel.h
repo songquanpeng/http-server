@@ -6,12 +6,14 @@
 #define SERVER_CHANNEL_H
 
 #include <functional>
+#include "EventLoop.h"
+#include "Callbacks.h"
 
 class Channel {
 public:
     typedef std::function<void()> EventCallback;
 
-    Channel();
+    Channel(EventLoop *loop, int fd);
 
     ~Channel();
 
@@ -24,10 +26,10 @@ public:
     void setCloseCallback(const EventCallback &cb);
 
     /// Call by poller
-    void getFd() const;
+    int getFd() const;
 
     /// Call by poller
-    void getListeningEvents() const;
+    short getListeningEvents() const;
 
     void enableListeningReadEvent();
 
@@ -40,17 +42,32 @@ public:
     bool isListeningWriteEvent() const;
 
     /// Call by poller
-    void setHappenedEvents() const;
+    void setHappenedEvents(int happenedEvents);
 
     /// Call by EventLoop::loop()
     void handleHappenedEvents();
 
+    int getIndex() const;
+
+    int setIndex(int index);
+
 private:
-    // Tell EventLoop my listening events changed.
-    void notifyEventLoop();
     static const int kNoneEvent;
     static const int kReadEvent;
     static const int kWriteEvent;
+
+    int happenedEvents_ = 0;
+    int listeningEvents_ = 0;
+    int index_ = -1;
+    bool handlingEvents = false;
+
+    EventLoop* ownerLoop;
+    const int fd_;
+
+    EventCallback readCallback;
+    EventCallback writeCallback;
+    EventCallback errorCallback;
+    EventCallback closeCallback;
 };
 
 

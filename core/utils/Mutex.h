@@ -38,4 +38,18 @@ private:
 };
 
 
+class MutexGuard {
+public:
+    explicit MutexGuard(Mutex &mutex) : mutex_(mutex) {
+        mutex_.lock();
+    }
+
+    ~MutexGuard() {
+        mutex_.unlock();
+    }
+
+private:
+    Mutex &mutex_;
+};
+
 #endif //SERVER_MUTEX_H

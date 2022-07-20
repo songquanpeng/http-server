@@ -7,6 +7,7 @@
 
 #include <cstdarg>
 #include <string>
+#include <cstdlib>
 #include <cstring>
 #include <cstdio>
 #include "../utils/BlockQueue.h"
@@ -55,7 +56,8 @@ private:
 #define LOG_DEBUG(format, ...) {Logger::get_instance()->write(__FILE__, __LINE__, 0, format, ##__VA_ARGS__); Logger::get_instance()->flush();}
 #define LOG_INFO(format, ...) {Logger::get_instance()->write(__FILE__, __LINE__, 1, format, ##__VA_ARGS__); Logger::get_instance()->flush();}
 #define LOG_WARN(format, ...) {Logger::get_instance()->write(__FILE__, __LINE__, 2, format, ##__VA_ARGS__); Logger::get_instance()->flush();}
-#define LOG_ERR(format, ...) {Logger::get_instance()->write(__FILE__, __LINE__, 3, format, ##__VA_ARGS__); Logger::get_instance()->flush();}
+#define LOG_ERROR(format, ...) {Logger::get_instance()->write(__FILE__, __LINE__, 3, format, ##__VA_ARGS__); Logger::get_instance()->flush();}
+#define LOG_FATAL(format, ...) {Logger::get_instance()->write(__FILE__, __LINE__, 4, format, ##__VA_ARGS__); Logger::get_instance()->flush(); exit(-1);}
 
 
 #endif //SERVER_LOGGER_H

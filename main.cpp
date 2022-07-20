@@ -1,32 +1,20 @@
-#include "TcpServer.h"
+#include "HTTPServer.h"
 #include "EventLoop.h"
+#include "HTTPConnection.h"
 
 using namespace std;
 
-void onConnectionEstablished(const TcpConnectionPtr &conn) {
-    LOG_INFO("onConnectionEstablished");
-}
-
-void onConnectionClosed(const TcpConnectionPtr &conn) {
-    LOG_INFO("onConnectionClosed");
-}
-
-void onMessage(const TcpConnectionPtr &conn, Buffer *buffer) {
-    LOG_INFO("onMessage");
-}
-
-void onWriteComplete(const TcpConnectionPtr &conn) {
-    LOG_INFO("onWriteComplete");
+void getTestPage(const HTTPRequestPtr &req, const HTTPConnectionPtr &res) {
+    LOG_INFO("getTestPage");
+    string html = "<h1>Hello World!</h2>";
+    res->send(html);
 }
 
 int main() {
-    TcpServer server;
     EventLoop loop;
-    server.setConnectionEstablishedCallback(onConnectionEstablished);
-    server.setMessageCallback(onMessage);
-    server.setWriteCompleteCallback(onWriteComplete);
-    server.setConnectionClosedCallback(onConnectionClosed);
-    server.start(4);
+    HTTPServer server(&loop, 3000, 4);
+    server.setRoute("/test", getTestPage);
+    server.start();
     loop.loop();
     return 0;
 }

@@ -7,8 +7,11 @@
 
 #include <functional>
 #include <pthread.h>
+#include <vector>
+#include <memory>
 
 #include "logger/Logger.h"
+#include "Poller.h"
 
 class EventLoop {
 public:
@@ -27,12 +30,27 @@ public:
 
     bool isInLoopThread() const;
 
-    void assertInLoopThread();
+    void assertInLoopThread() const;
 
     void runInLoop(const Functor &cb);
 
     void queueInLoop(const Functor &cb);
 
+    void updateChannel(Channel* channel);
+
+private:
+    typedef std::vector<Channel *> ChannelList;
+
+    Mutex mutex;
+    pid_t threadId;
+    std::vector<Functor> pendingFunctors;
+    bool isCallingPendingFunctors = false;
+    // TODO: why unique_ptr here
+    std::unique_ptr<Poller> poller;
+    bool isQuited = false;
+    ChannelList activeChannels;
+
+    void doPendingFactors();
 };
 
 
