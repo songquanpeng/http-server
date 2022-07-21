@@ -14,6 +14,8 @@
 #include <unistd.h>
 #include "Channel.h"
 #include <functional>
+#include "HTTPConnection.h"
+
 
 HTTPServer::HTTPServer(EventLoop *loop, int port, int numThreads) :
         loop_(loop), socket_fd_(setUpSocket(port)), acceptChannel(loop, socket_fd_) {
@@ -41,7 +43,11 @@ void HTTPServer::start() {
 }
 
 void HTTPServer::setRoute(const std::string &prefix, const RouteCallback &cb) {
-    routeMap[prefix] = cb;
+    if (started) {
+        LOG_WARN("Trying to register route handler but server already started");
+    } else {
+        routeMap[prefix] = cb;
+    }
 }
 
 int HTTPServer::setUpSocket(int port) {
@@ -69,7 +75,7 @@ int HTTPServer::setUpSocket(int port) {
 
 void HTTPServer::newConnection() {
     loop_->assertInLoopThread();
-    struct sockaddr_in addr;
+    struct sockaddr_in addr{};
     bzero(&addr, sizeof addr);
     socklen_t addrlen = sizeof addr;
     // TODO: accept4 vs accept
@@ -78,8 +84,52 @@ void HTTPServer::newConnection() {
         LOG_ERROR("HTTPServer::newConnection accept failed with errno %d", errno);
         return;
     }
-    // TODO: process new connection
-    LOG_INFO("New connection with conn_fd %d", conn_fd);
+    char buf[32];
+    char host[INET_ADDRSTRLEN] = "INVALID";
+    ::inet_ntop(AF_INET, &addr.sin_addr, host, sizeof host);
+    uint16_t port = ntohs(addr.sin_port);
+    snprintf(buf, sizeof buf, "%s:%u", host, port);
+    LOG_INFO("New connection with conn fd %d from %s", conn_fd, buf);
+
+    // TODO: get loop from loop poll
+    std::string connName = buf;
+    HTTPConnectionPtr conn(new HTTPConnection(loop_, this, conn_fd, connName));
+    connectionMap[connName] = conn;
+    conn->setCloseCallback(std::bind(&HTTPServer::removeConnection, this, conn));
+    loop_->runInLoop(std::bind(&HTTPConnection::connectionEstablished, conn));
 }
+
+RouteCallback HTTPServer::getRouteCallback(const std::string &url) {
+    // TODO: url -> route mapping
+    // TODO: 404 route
+    if (routeMap.count(url)) {
+        return routeMap[url];
+    }
+    return [](const HTTPRequestPtr &req, const HTTPConnectionPtr &res) {
+        res->send("<html>\n"
+                  "<head><title>404 Not Found</title></head>\n"
+                  "<body bgcolor=\"white\">\n"
+                  "<center><h1>404 Not Found</h1></center>\n"
+                  "<hr><center>JustSong's Server</center>\n"
+                  "</body>\n"
+                  "</html>");
+    };
+}
+
+void HTTPServer::removeConnection(const HTTPConnectionPtr &conn) {
+    if (loop_->isInLoopThread()) {
+        removeConnectionInLoop(conn);
+    } else {
+        loop_->runInLoop(std::bind(&HTTPServer::removeConnectionInLoop, this, conn));
+    }
+}
+
+void HTTPServer::removeConnectionInLoop(const HTTPConnectionPtr &conn) {
+    routeMap.erase(conn->getName());
+    auto loop = conn->getLoop();
+    // TODO: why not HTTPConnection destroy by itself?
+    loop->runInLoop(std::bind(&HTTPConnection::connectionDestroyed, conn));
+}
+
 
 

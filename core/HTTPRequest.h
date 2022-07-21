@@ -13,6 +13,7 @@ public:
     std::string method;
     std::string url;
     std::unordered_map<std::string, std::string> headers;
+    int bodySize = -1;  // -1 means unfinished
     std::string body;
 };
 

@@ -6,6 +6,7 @@
 #include "EventLoop.h"
 #include "utils/Mutex.h"
 #include "Channel.h"
+#include "utils/common.h"
 
 __thread EventLoop *eventLoopOfThisThread = nullptr;
 const int kPollTimeMs = 10000;
@@ -39,7 +40,7 @@ void EventLoop::loop() {
     while (!isQuited) {
         activeChannels.clear();
         poller->poll(kPollTimeMs, &activeChannels);
-        for (auto channel : activeChannels) {
+        for (auto channel: activeChannels) {
             channel->handleHappenedEvents();
         }
         doPendingFactors();

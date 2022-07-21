@@ -57,7 +57,7 @@ void Channel::disableListeningWriteEvent() {
     ownerLoop->updateChannel(this);
 }
 
-void Channel::disableAllEvent() {
+void Channel::disableListeningAllEvent() {
     listeningEvents_ = kNoneEvent;
     ownerLoop->updateChannel(this);
 }
@@ -75,14 +75,14 @@ void Channel::handleHappenedEvents() {
     if ((happenedEvents_ & POLLHUP) && !(happenedEvents_ & POLLIN)) {
         if (closeCallback) closeCallback();
     }
-    if (handlingEvents & (POLLERR | POLLNVAL)) {
+    if (happenedEvents_ & (POLLERR | POLLNVAL)) {
         if (errorCallback) errorCallback();
     }
-    if (handlingEvents & (POLLIN | POLLPRI | POLLRDHUP)) {
-        if (writeCallback) writeCallback();
-    }
-    if (handlingEvents & POLLOUT) {
+    if (happenedEvents_ & (POLLIN | POLLPRI | POLLRDHUP)) {
         if (readCallback) readCallback();
+    }
+    if (happenedEvents_ & POLLOUT) {
+        if (writeCallback) writeCallback();
     }
     handlingEvents = false;
 }

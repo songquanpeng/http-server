@@ -37,7 +37,7 @@ public:
 
     void disableListeningWriteEvent();
 
-    void disableAllEvent();
+    void disableListeningAllEvent();
 
     bool isListeningWriteEvent() const;
 

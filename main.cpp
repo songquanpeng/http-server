@@ -4,16 +4,16 @@
 
 using namespace std;
 
-void getTestPage(const HTTPRequestPtr &req, const HTTPConnectionPtr &res) {
-    LOG_INFO("getTestPage");
-    string html = "<h1>Hello World!</h2>";
+void getIndexPage(const HTTPRequestPtr &req, const HTTPConnectionPtr &res) {
+    LOG_INFO("getIndexPage");
+    string html = "<h1>Hello World!</h1>";
     res->send(html);
 }
 
 int main() {
     EventLoop loop;
     HTTPServer server(&loop, 3000, 4);
-    server.setRoute("/test", getTestPage);
+    server.setRoute("/", getIndexPage);
     server.start();
     loop.loop();
     return 0;

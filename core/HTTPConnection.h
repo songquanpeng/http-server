@@ -6,12 +6,22 @@
 #define SERVER_HTTPCONNECTION_H
 
 #include <string>
+#include <memory>
 
 #include "Callbacks.h"
+#include "HTTPRequest.h"
 
-class HTTPConnection {
+
+// TODO: why this?
+class EventLoop;
+
+class HTTPServer;
+
+class Channel;
+
+class HTTPConnection : public std::enable_shared_from_this<HTTPConnection> {
 public:
-    HTTPConnection();
+    HTTPConnection(EventLoop *loop, HTTPServer *server, int sock_fd, std::string name);
 
     ~HTTPConnection();
 
@@ -27,10 +37,38 @@ public:
     /// Called by HTTPServer
     void connectionDestroyed();
 
+    void setCloseCallback(const CloseCallback &cb);
+
+    std::string getName() const;
+
+    EventLoop *getLoop() const;
+
 private:
     void sendInLoop(const std::string &message);
 
     void closeInLoop();
+
+    void handleRead();
+
+    void handleWrite();
+
+    void handleError();
+
+    void handleClose();
+
+    bool parseRequestHead(const std::string &data);
+
+    bool parseRequestBody(const std::string &data);
+
+    std::string buildHTTPResponse(const std::string &data);
+
+    HTTPServer *ownerServer;
+    EventLoop *ownerLoop;
+    std::shared_ptr<HTTPRequest> request;
+    std::unique_ptr<Channel> channel;
+    int sock_fd_;
+    CloseCallback closeCallback_;
+    std::string name_;
 };
 
 
