@@ -49,6 +49,7 @@ void Poller::updateChannel(Channel *channel) {
         pfd.revents = 0;
         pollFdList.push_back(pfd);
         int idx = (int) pollFdList.size() - 1;
+        // TODO: the following line will cause Signal: SIGSEGV (Segmentation fault) on Release mode
         channel->setIndex(idx);
         channelMap[pfd.fd] = channel;
     } else {
