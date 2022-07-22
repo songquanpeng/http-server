@@ -10,6 +10,7 @@
 
 #include "Callbacks.h"
 #include "HTTPRequest.h"
+#include "Buffer.h"
 
 
 // TODO: why this?
@@ -56,9 +57,9 @@ private:
 
     void handleClose();
 
-    bool parseRequestHead(const std::string &data);
+    void tryConstructRequestAndProcess();
 
-    bool parseRequestBody(const std::string &data);
+    int parseRequest(const std::string &data, int &onlyNeedNBytes);
 
     std::string buildHTTPResponse(const std::string &data);
 
@@ -69,6 +70,11 @@ private:
     int sock_fd_;
     CloseCallback closeCallback_;
     std::string name_;
+    // This is used by tryConstructRequestAndProcess() & handleRead()
+    int needNMoreBytes = -1;
+
+    Buffer inputBuffer;
+    Buffer outputBuffer;
 };
 
 

@@ -100,8 +100,6 @@ void HTTPServer::newConnection() {
 }
 
 RouteCallback HTTPServer::getRouteCallback(const std::string &url) {
-    // TODO: url -> route mapping
-    // TODO: 404 route
     if (routeMap.count(url)) {
         return routeMap[url];
     }
