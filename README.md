@@ -10,6 +10,8 @@ $ uname -r
 $ sudo apt install build-essential cmake
 $ cmake --version
 cmake version 3.22.1
+$ gcc --version
+gcc (Ubuntu 11.2.0-19ubuntu1) 11.2.0
 ```
 2. Build executables:
 ```shell
