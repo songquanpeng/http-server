@@ -50,3 +50,11 @@ server.serveStatic("/public");
 server.start();
 loop_.loop_();
 ```
+
+## Others
+Benchmark:
+```shell
+wget https://github.com/justsong-lab/WebBench/releases/download/v0.1.0/webbench
+chmod u+x webbench
+./webbench -c 100 -t 5 http://localhost:3000/
+```
