@@ -95,3 +95,7 @@ void Channel::setIndex(int index) {
     index_ = index;
 }
 
+bool Channel::isWriting() const {
+    return listeningEvents_ & kWriteEvent;
+}
+

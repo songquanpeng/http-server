@@ -103,14 +103,14 @@ RouteCallback HTTPServer::getRouteCallback(const std::string &url) {
     if (routeMap.count(url)) {
         return routeMap[url];
     }
-    return [](const HTTPRequestPtr &req, const HTTPConnectionPtr &res) {
-        res->send("<html>\n"
-                  "<head><title>404 Not Found</title></head>\n"
-                  "<body bgcolor=\"white\">\n"
-                  "<center><h1>404 Not Found</h1></center>\n"
-                  "<hr><center>JustSong's Server</center>\n"
-                  "</body>\n"
-                  "</html>");
+    return [](const HTTPRequestPtr &req, const HTTPResponsePtr &res) {
+        res->setStatus(HTTPResponse::NOT_FOUND)->send("<html>\n"
+                                                      "<head><title>404 Not Found</title></head>\n"
+                                                      "<body bgcolor=\"white\">\n"
+                                                      "<center><h1>404 Not Found</h1></center>\n"
+                                                      "<hr><center>JustSong's Server</center>\n"
+                                                      "</body>\n"
+                                                      "</html>");
     };
 }
 

@@ -10,6 +10,7 @@
 
 #include "Callbacks.h"
 #include "HTTPRequest.h"
+#include "HTTPResponse.h"
 #include "Buffer.h"
 
 
@@ -45,7 +46,14 @@ public:
     EventLoop *getLoop() const;
 
 private:
-    void sendInLoop(const std::string &message);
+    enum State {
+        kConnecting,
+        kConnected,
+        kDisconnecting,
+        kDisconnected
+    };
+
+    void sendInLoop(const std::string &response);
 
     void closeInLoop();
 
@@ -57,20 +65,17 @@ private:
 
     void handleClose();
 
-    void tryConstructRequestAndProcess();
+    void tryBuildRequestAndProcess();
 
-    int parseRequest(const std::string &data, int &onlyNeedNBytes);
-
-    std::string buildHTTPResponse(const std::string &data);
+    static int parseRequest(const std::string &data, int &onlyNeedNBytes, const std::shared_ptr<HTTPRequest> &request);
 
     HTTPServer *ownerServer;
     EventLoop *ownerLoop;
-    std::shared_ptr<HTTPRequest> request;
     std::unique_ptr<Channel> channel;
     int sock_fd_;
     CloseCallback closeCallback_;
     std::string name_;
-    // This is used by tryConstructRequestAndProcess() & handleRead()
+    // This is used by tryBuildRequestAndProcess() & handleRead()
     int needNMoreBytes = -1;
 
     Buffer inputBuffer;

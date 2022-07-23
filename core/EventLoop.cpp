@@ -90,3 +90,7 @@ void EventLoop::doPendingFactors() {
 void EventLoop::updateChannel(Channel *channel) {
     poller->updateChannel(channel);
 }
+
+void EventLoop::removeChannel(Channel *channel) {
+    poller->removeChannel(channel);
+}

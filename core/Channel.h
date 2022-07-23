@@ -51,6 +51,8 @@ public:
 
     void setIndex(int index);
 
+    bool isWriting() const;
+
 private:
     static const int kNoneEvent;
     static const int kReadEvent;

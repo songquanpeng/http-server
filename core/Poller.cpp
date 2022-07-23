@@ -56,12 +56,14 @@ void Poller::updateChannel(Channel *channel) {
         // This is fixed by accident by checking for build warnings.
         channel->setIndex(idx);
         channelMap[pfd.fd] = channel;
+        LOG_INFO("Poller::updateChannel new channel with fd %d added", pfd.fd);
     } else {
         // Update existing one
         int idx = channel->getIndex();
         auto &pfd = pollFdList[idx];
         pfd.events = channel->getListeningEvents();
         pfd.revents = 0;
+        LOG_INFO("Poller::updateChannel channel with fd %d updated", pfd.fd);
         // TODO: ignore none event fd
     }
 }
@@ -81,4 +83,5 @@ void Poller::removeChannel(Channel *channel) {
         std::iter_swap(pollFdList.begin() + idx, pollFdList.end() - 1);
     }
     pollFdList.pop_back();
+    LOG_INFO("Poller::updateChannel channel with fd %d removed", pfd.fd);
 }

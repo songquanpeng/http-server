@@ -4,16 +4,14 @@
 
 using namespace std;
 
-void getIndexPage(const HTTPRequestPtr &req, const HTTPConnectionPtr &res) {
+void getIndexPage(const HTTPRequestPtr &req, const HTTPResponsePtr &res) {
     LOG_INFO("getIndexPage");
-    string html = "<h1>Hello World!</h1><a href='/echo'>Go To Echo Page</a>";
-    res->send(html);
+    res->send("<h1>Hello World!</h1><a href='/echo'>Go To Echo Page</a>");
 }
 
-void getEchoPage(const HTTPRequestPtr &req, const HTTPConnectionPtr &res) {
+void getEchoPage(const HTTPRequestPtr &req, const HTTPResponsePtr &res) {
     LOG_INFO("getEchoPage");
-    string html = "<li> Method: " + req->method + "</li><li> URL: " + req->url + "</li>";
-    res->send(html);
+    res->send("<li> Method: " + req->method + "</li><li> URL: " + req->url + "</li>");
 }
 
 int main() {

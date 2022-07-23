@@ -36,7 +36,9 @@ public:
 
     void queueInLoop(const Functor &cb);
 
-    void updateChannel(Channel* channel);
+    void updateChannel(Channel *channel);
+
+    void removeChannel(Channel *channel);
 
 private:
     typedef std::vector<Channel *> ChannelList;

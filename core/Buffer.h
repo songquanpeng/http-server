@@ -26,6 +26,7 @@ public:
         return buffer_.size() - writeIdx_;
     }
 
+    /// Return the read pointer
     const char *peek() const {
         return begin() + readIdx_;
     }
