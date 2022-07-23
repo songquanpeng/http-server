@@ -40,6 +40,8 @@ public:
 
     void removeChannel(Channel *channel);
 
+    void wakeUp() const;
+
 private:
     typedef std::vector<Channel *> ChannelList;
 
@@ -51,6 +53,9 @@ private:
     std::unique_ptr<Poller> poller;
     bool isQuited = false;
     ChannelList activeChannels;
+    int wakeUpFd_;
+    std::unique_ptr<Channel> wakeUpChannel_;
+
 
     void doPendingFactors();
 };

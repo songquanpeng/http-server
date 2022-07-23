@@ -93,7 +93,6 @@ void HTTPServer::newConnection() {
     snprintf(buf, sizeof buf, "%s:%u", host, port);
     LOG_INFO("New connection with conn fd %d from %s", conn_fd, buf);
 
-    // TODO: get loop_ from loop_ poll
     auto ioLoop = threadPool->getNextLoop();
     std::string connName = buf;
     HTTPConnectionPtr conn(new HTTPConnection(ioLoop, this, conn_fd, connName));

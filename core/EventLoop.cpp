@@ -3,6 +3,7 @@
 //
 
 #include <csignal>
+#include <sys/eventfd.h>
 #include "EventLoop.h"
 #include "Mutex.h"
 #include "Channel.h"
@@ -22,13 +23,28 @@ public:
 
 IgnoreSigPipe ignoreSigPipe;
 
-EventLoop::EventLoop() : threadId(gettid()), poller(new Poller(this)) {
+int createEventFd() {
+    int fd = eventfd(0, EFD_NONBLOCK | EFD_CLOEXEC);
+    if (fd < 0) {
+        LOG_FATAL("EventLoop::EventLoop failed in eventfd");
+    }
+    return fd;
+}
+
+EventLoop::EventLoop() : threadId(gettid()), poller(new Poller(this)), wakeUpFd_(createEventFd()),
+                         wakeUpChannel_(new Channel(this, wakeUpFd_)) {
     LOG_INFO("EventLoop %d created in thread %d", this, threadId);
     if (eventLoopOfThisThread) {
         LOG_FATAL("Another EventLoop already created in this thread %d", threadId);
     } else {
         eventLoopOfThisThread = this;
     }
+    int fd = wakeUpFd_;
+    wakeUpChannel_->setReadCallback([fd]() -> void {
+        uint64_t one = 1;
+        read(fd, &one, sizeof one);
+    });
+    wakeUpChannel_->enableListeningReadEvent();
 }
 
 EventLoop::~EventLoop() {
@@ -72,7 +88,9 @@ void EventLoop::queueInLoop(const EventLoop::Functor &cb) {
         MutexGuard lock(mutex);
         pendingFunctors.push_back(cb);
     }
-    // TODO: wake up event loop_ to run functor ASAP
+    if (!isInLoopThread() || isCallingPendingFunctors) {
+        wakeUp();
+    }
 }
 
 void EventLoop::doPendingFactors() {
@@ -94,4 +112,10 @@ void EventLoop::updateChannel(Channel *channel) {
 
 void EventLoop::removeChannel(Channel *channel) {
     poller->removeChannel(channel);
+}
+
+// If we don't have  wakeUp(), the event loop will have to wait timeout to start processing pending factors.
+void EventLoop::wakeUp() const {
+    uint64_t one = 1;
+    write(wakeUpFd_, &one, sizeof one);
 }
