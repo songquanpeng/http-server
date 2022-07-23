@@ -21,15 +21,15 @@ public:
 
 
     /// Poll I/O events
-    /// Must be called in loop thread
+    /// Must be called in loop_ thread
     void poll(int timeoutMs, ChannelList *activeChannels);
 
     /// Change interested I/O events
-    /// Must be called in loop thread
+    /// Must be called in loop_ thread
     void updateChannel(Channel *channel);
 
     /// Remove channel
-    /// Must be called in loop thread
+    /// Must be called in loop_ thread
     void removeChannel(Channel *channel);
 
 private:

@@ -19,6 +19,7 @@ int main() {
     HTTPServer server(&loop, 3000, 4);
     server.setRoute("/", getIndexPage);
     server.setRoute("/echo", getEchoPage);
+    server.serveStatic("/public");
     server.start();
     loop.loop();
     return 0;

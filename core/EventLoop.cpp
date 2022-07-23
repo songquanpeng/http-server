@@ -8,6 +8,7 @@
 #include "Channel.h"
 #include "common.h"
 
+
 __thread EventLoop *eventLoopOfThisThread = nullptr;
 const int kPollTimeMs = 10000;
 
@@ -71,7 +72,7 @@ void EventLoop::queueInLoop(const EventLoop::Functor &cb) {
         MutexGuard lock(mutex);
         pendingFunctors.push_back(cb);
     }
-    // TODO: wake up event loop to run functor ASAP
+    // TODO: wake up event loop_ to run functor ASAP
 }
 
 void EventLoop::doPendingFactors() {

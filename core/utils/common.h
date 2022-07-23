@@ -9,8 +9,14 @@
 #include <unistd.h>
 #include <sys/syscall.h>
 
-int gettid() {
-    return syscall(__NR_gettid);
+__thread pid_t t_cachedTid = 0;
+
+
+pid_t gettid() {
+    if (t_cachedTid == 0) {
+        t_cachedTid = syscall(__NR_gettid);
+    }
+    return t_cachedTid;
 }
 
 #endif //SERVER_COMMON_H

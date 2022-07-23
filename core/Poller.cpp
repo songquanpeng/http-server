@@ -78,7 +78,7 @@ void Poller::removeChannel(Channel *channel) {
     if (idx != pollFdList.size() - 1) {
         // swap with the last one
         int lastChannelFd = pollFdList.back().fd;
-        // update the origin last one's idx
+        // update the origin last one's nextLoopIdx
         channelMap[lastChannelFd]->setIndex(idx);
         std::iter_swap(pollFdList.begin() + idx, pollFdList.end() - 1);
     }

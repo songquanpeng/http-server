@@ -28,10 +28,10 @@ make
 
 ## Basic Usages
 Please refer [main.cpp](./main.cpp) for details.
-1. Initialize server & event loop:
+1. Initialize server & event loop_:
 ```C++
-EventLoop loop;
-HTTPServer server(&loop, 3000, 4);
+EventLoop loop_;
+HTTPServer server(&loop_, 3000, 4);
 ```
 2. Define controllers:
 ```C++
@@ -48,5 +48,5 @@ server.serveStatic("/public");
 4. Start serving:
 ```C++
 server.start();
-loop.loop();
+loop_.loop_();
 ```

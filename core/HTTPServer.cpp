@@ -18,7 +18,8 @@
 
 
 HTTPServer::HTTPServer(EventLoop *loop, int port, int numThreads) :
-        loop_(loop), socket_fd_(setUpSocket(port)), acceptChannel(loop, socket_fd_) {
+        loop_(loop), socket_fd_(setUpSocket(port)), acceptChannel(loop, socket_fd_),
+        threadPool(new EventLoopThreadPool(loop, numThreads)) {
     // TODO: use EventLoop po
     acceptChannel.setReadCallback(std::bind(&HTTPServer::newConnection, this));
 }
@@ -30,6 +31,7 @@ HTTPServer::~HTTPServer() {
 
 void HTTPServer::start() {
     if (!started) {
+        threadPool->start();
         LOG_INFO("Server started");
         loop_->assertInLoopThread();
         // TODO: SOMAXCONN
@@ -91,12 +93,13 @@ void HTTPServer::newConnection() {
     snprintf(buf, sizeof buf, "%s:%u", host, port);
     LOG_INFO("New connection with conn fd %d from %s", conn_fd, buf);
 
-    // TODO: get loop from loop poll
+    // TODO: get loop_ from loop_ poll
+    auto ioLoop = threadPool->getNextLoop();
     std::string connName = buf;
-    HTTPConnectionPtr conn(new HTTPConnection(loop_, this, conn_fd, connName));
+    HTTPConnectionPtr conn(new HTTPConnection(ioLoop, this, conn_fd, connName));
     connectionMap[connName] = conn;
     conn->setCloseCallback(std::bind(&HTTPServer::removeConnection, this, conn));
-    loop_->runInLoop(std::bind(&HTTPConnection::connectionEstablished, conn));
+    ioLoop->runInLoop(std::bind(&HTTPConnection::connectionEstablished, conn));
 }
 
 RouteCallback HTTPServer::getRouteCallback(const std::string &url) {
@@ -127,6 +130,10 @@ void HTTPServer::removeConnectionInLoop(const HTTPConnectionPtr &conn) {
     auto loop = conn->getLoop();
     // TODO: why not HTTPConnection destroy by itself?
     loop->runInLoop(std::bind(&HTTPConnection::connectionDestroyed, conn));
+}
+
+void HTTPServer::serveStatic(const std::string &prefix) {
+    // TODO: server static files
 }
 
 

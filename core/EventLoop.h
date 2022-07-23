@@ -22,8 +22,8 @@ public:
     ~EventLoop();
 
     /// Call by user
-    /// The main part is a while loop.
-    /// In each loop, we use select() / poll() / epoll() to check which fd have interested events happens.
+    /// The main part is a while loop_.
+    /// In each loop_, we use select() / poll() / epoll() to check which fd have interested events happens.
     /// Then call the corresponding handlers.
     /// Finally do the jobs that passed in by queueInLoop().
     void loop();
@@ -44,7 +44,7 @@ private:
     typedef std::vector<Channel *> ChannelList;
 
     Mutex mutex;
-    pid_t threadId;
+    const pid_t threadId;
     std::vector<Functor> pendingFunctors;
     bool isCallingPendingFunctors = false;
     // TODO: why unique_ptr here
