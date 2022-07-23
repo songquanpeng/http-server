@@ -85,7 +85,7 @@ void Logger::write(const char *file, int line, int level, const char *format, ..
 #endif
 }
 
-void *Logger::async_write() {
+void Logger::async_write() {
     string log;
     while (log_queue_->pop(log)) {
         mutex_.lock();

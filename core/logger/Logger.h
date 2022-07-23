@@ -23,6 +23,7 @@ public:
 
     static void *flush_log(void *args) {
         Logger::get_instance()->async_write();
+        return nullptr;  // Make g++ happy :)
     }
 
     void flush(void);
@@ -36,7 +37,7 @@ private:
 
     virtual ~Logger() = default;
 
-    void *async_write();
+    void async_write();
 
 
 private:

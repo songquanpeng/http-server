@@ -69,9 +69,10 @@ void HTTPConnection::handleRead() {
     } else if (n == 0) {
         // This means the connection can be close now.
         handleClose();
+        return;
     }
     if (needNMoreBytes == -1 || inputBuffer.readableBytes() >= needNMoreBytes) {
-        tryConstructRequestAndProcess();
+        ownerLoop->runInLoop(std::bind(&HTTPConnection::tryConstructRequestAndProcess, this));
     }
 }
 

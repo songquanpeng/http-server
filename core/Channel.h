@@ -49,7 +49,7 @@ public:
 
     int getIndex() const;
 
-    int setIndex(int index);
+    void setIndex(int index);
 
 private:
     static const int kNoneEvent;

@@ -91,7 +91,7 @@ int Channel::getIndex() const {
     return index_;
 }
 
-int Channel::setIndex(int index) {
+void Channel::setIndex(int index) {
     index_ = index;
 }
 
