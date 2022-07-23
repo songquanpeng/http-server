@@ -4,9 +4,9 @@
 
 #include <csignal>
 #include "EventLoop.h"
-#include "utils/Mutex.h"
+#include "Mutex.h"
 #include "Channel.h"
-#include "utils/common.h"
+#include "common.h"
 
 __thread EventLoop *eventLoopOfThisThread = nullptr;
 const int kPollTimeMs = 10000;

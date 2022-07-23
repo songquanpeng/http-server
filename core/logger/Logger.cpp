@@ -94,7 +94,7 @@ void Logger::async_write() {
     }
 }
 
-void Logger::flush(void) {
+void Logger::flush() {
     mutex_.lock();
     fflush(fp_);
     mutex_.unlock();

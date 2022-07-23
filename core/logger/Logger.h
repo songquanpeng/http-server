@@ -10,7 +10,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <cstdio>
-#include "../utils/BlockQueue.h"
+#include "BlockQueue.h"
 
 class Logger {
 public:
@@ -26,7 +26,7 @@ public:
         return nullptr;  // Make g++ happy :)
     }
 
-    void flush(void);
+    void flush();
 
 private:
     Logger() {

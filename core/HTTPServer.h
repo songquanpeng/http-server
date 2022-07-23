@@ -5,7 +5,7 @@
 #ifndef SERVER_HTTPSERVER_H
 #define SERVER_HTTPSERVER_H
 
-#include "logger/Logger.h"
+#include "Logger.h"
 #include "Callbacks.h"
 #include "Channel.h"
 #include <unordered_map>
